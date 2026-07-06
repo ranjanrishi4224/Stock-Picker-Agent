@@ -1,81 +1,109 @@
 find_trending_companies:
   description: >
     Search the latest financial news and market updates as of {current_date}
-    to identify 2–3 publicly traded companies that are currently trending
-    in the {sector} sector. Prioritize companies with significant news,
-    earnings announcements, mergers, acquisitions, product launches,
-    analyst upgrades, or other major developments. Avoid selecting
-    companies that were chosen in previous executions.
+    to identify the 2-3 most trending publicly traded companies in the
+    {sector} sector.
+
+    Prioritize companies making headlines because of:
+    - Earnings announcements
+    - AI developments
+    - Product launches
+    - Mergers or acquisitions
+    - Strategic partnerships
+    - Regulatory announcements
+    - Analyst upgrades or downgrades
+    - Other significant market-moving events
+
+    For each company include:
+    - Company name
+    - Stock ticker
+    - Industry
+    - Why the company is trending
+    - A concise summary of the latest news
+
+    Use only recent and reliable sources.
+    Do not invent companies or news.
 
   expected_output: >
-    A JSON file containing 2–3 trending companies with their ticker symbols,
-    industry, a brief explanation of why they are trending, and links or
-    references to the news sources.
+    A well-formatted Markdown report containing 2-3 trending companies,
+    their ticker symbols, industries, news summaries, and reasons for trending.
 
   agent: trending_company_finder
 
-  output_file: output/trending_companies.json
+  output_file: output/trending_companies.md
 
 
 research_trending_companies:
   description: >
-    Using the identified companies, perform comprehensive financial research
-    with information available as of {current_date}. Analyze each company's
-    business model, financial performance, competitive advantages,
-    recent developments, growth opportunities, valuation, and investment risks.
+    Using the companies identified previously, perform comprehensive
+    investment research using the latest publicly available information.
+
+    For each company include:
+
+    - Company overview
+    - Business model
+    - Revenue and profitability
+    - Financial performance
+    - Competitive advantages
+    - Industry position
+    - Recent developments
+    - Growth opportunities
+    - Key investment risks
+    - Overall investment outlook
+
+    Support your analysis with current information and present a balanced,
+    objective assessment.
 
   expected_output: >
-    A structured JSON report containing detailed research for each company,
-    including strengths, weaknesses, opportunities, risks, and an overall
-    investment outlook.
+    A comprehensive Markdown research report for each company.
 
   agent: financial_researcher
 
   context:
     - find_trending_companies
 
-  output_file: output/research_report.json
+  output_file: output/research_report.md
 
 
 pick_best_company:
   description: >
-    Analyze the research findings and determine the single best company for
-    investment using the latest available information as of {current_date}.
+    Review all research findings and identify the strongest long-term
+    investment opportunity.
 
-    Before generating the final report, use the Email tool to send a
-    professional email to the user.
+    Compare the companies based on:
 
-    The email should include:
+    - Financial strength
+    - Revenue growth
+    - Profitability
+    - Competitive advantages
+    - Industry leadership
+    - Future growth potential
+    - Recent developments
+    - Valuation
+    - Investment risks
 
-    Subject:
-    Investment Recommendation - {current_date}
+    Select the single best company and clearly justify your decision.
 
-    Body:
-    - A professional greeting.
-    - The name and ticker symbol of the recommended company.
-    - A concise executive summary (2-3 sentences) explaining why this company
-      was selected.
-    - Three to five bullet points highlighting the company's key strengths.
-    - A brief paragraph describing the primary investment risks.
-    - A one-sentence disclaimer stating that the recommendation is based on
-      publicly available information and is not financial advice.
-    - A professional closing.
+    Generate a professional investment report containing:
 
-    After successfully sending the email, generate a comprehensive Markdown
-    report that includes:
     - Executive Summary
     - Recommended Company
+    - Stock Ticker
+    - Company Overview
     - Investment Thesis
     - Financial Analysis
     - Growth Opportunities
-    - Risk Analysis
+    - Competitive Advantages
+    - Key Risks
     - Comparison with the other researched companies
-    - Reasons the other companies were not selected
+    - Reasons the remaining companies were not selected
     - Final Investment Recommendation
 
+    The report should be professional, well-structured, and written in Markdown.
+
   expected_output: >
-    A detailed Markdown investment report. The email should be sent using the
-    Email tool before the report is returned.
+    A comprehensive Markdown investment report recommending the best company
+    for investment. Save the report as output/decision.md.
 
   agent: stock_picker
 
