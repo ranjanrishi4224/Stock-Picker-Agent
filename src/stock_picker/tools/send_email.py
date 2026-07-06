@@ -47,9 +47,9 @@ def send_email(subject: str, message: str) -> str:
     msg["To"] = recipient
     msg["Subject"] = subject
 
-    msg.attach(MIMEText(message, "plain"))
+    msg.attach(MIMEText(message, "html"))
 
-    report_path = "output/decision.md"
+    report_path = "output/report.pdf"
 
     if os.path.exists(report_path):
         try:

@@ -1,0 +1,213 @@
+
+import os
+import re
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    HRFlowable,
+)
+from reportlab.pdfgen import canvas
+
+
+GREEN_DARK = "#2E7D32"
+GREEN = "#4CAF50"
+GREEN_LIGHT = "#A5D6A7"
+
+
+def markdown_to_reportlab(text: str) -> str:
+    """Convert simple Markdown to ReportLab markup."""
+    text = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", text)
+    text = re.sub(r"\*(.*?)\*", r"<i>\1</i>", text)
+    return text
+
+
+class NumberedCanvas(canvas.Canvas):
+    """Adds page numbers."""
+
+    def showPage(self):
+        self._saved_page_states = getattr(self, "_saved_page_states", [])
+        self._saved_page_states.append(dict(self.__dict__))
+        self._startPage()
+
+    def save(self):
+        page_count = len(self._saved_page_states)
+        for state in self._saved_page_states:
+            self.__dict__.update(state)
+            self.draw_page_number(page_count)
+            canvas.Canvas.showPage(self)
+        canvas.Canvas.save(self)
+
+    def draw_page_number(self, page_count):
+        self.setFont("Helvetica", 9)
+        self.setFillColor(colors.grey)
+        self.drawRightString(
+            7.5 * inch,
+            0.45 * inch,
+            f"Page {self._pageNumber} of {page_count}",
+        )
+
+
+def generate_pdf(
+    markdown_path="output/decision.md",
+    pdf_path="output/report.pdf",
+):
+    """
+    Convert CrewAI markdown report into a styled PDF.
+    """
+
+    if not os.path.exists(markdown_path):
+        raise FileNotFoundError(markdown_path)
+
+    os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+
+    with open(markdown_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    doc = SimpleDocTemplate(
+        pdf_path,
+        leftMargin=40,
+        rightMargin=40,
+        topMargin=40,
+        bottomMargin=40,
+    )
+
+    styles = getSampleStyleSheet()
+
+    title = ParagraphStyle(
+        "Title",
+        parent=styles["Title"],
+        alignment=TA_CENTER,
+        fontSize=24,
+        textColor=colors.HexColor(GREEN_DARK),
+        spaceAfter=10,
+    )
+
+    subtitle = ParagraphStyle(
+        "Subtitle",
+        parent=styles["Heading2"],
+        alignment=TA_CENTER,
+        fontSize=13,
+        textColor=colors.HexColor(GREEN),
+        spaceAfter=20,
+    )
+
+    heading = ParagraphStyle(
+        "Heading",
+        parent=styles["Heading2"],
+        fontSize=15,
+        textColor=colors.white,
+        backColor=colors.HexColor(GREEN_LIGHT),
+        spaceBefore=12,
+        spaceAfter=8,
+        leftIndent=6,
+    )
+
+    subheading = ParagraphStyle(
+        "SubHeading",
+        parent=styles["Heading3"],
+        fontSize=12,
+        textColor=colors.HexColor(GREEN_DARK),
+        spaceBefore=8,
+        spaceAfter=5,
+    )
+
+    body = ParagraphStyle(
+        "Body",
+        parent=styles["BodyText"],
+        fontSize=11,
+        leading=18,
+        spaceAfter=6,
+    )
+
+    bullet = ParagraphStyle(
+        "Bullet",
+        parent=body,
+        leftIndent=20,
+        bulletIndent=10,
+    )
+
+    important = ParagraphStyle(
+        "Important",
+        parent=body,
+        textColor=colors.HexColor("#C62828"),
+        leading=18,
+        borderColor=colors.HexColor("#C62828"),
+        borderWidth=1,
+        borderPadding=8,
+    )
+
+    story = []
+
+    story.append(Paragraph("Stock Picker AI", title))
+    story.append(Paragraph("Investment Recommendation Report", subtitle))
+    story.append(
+        HRFlowable(
+            width="100%",
+            thickness=2,
+            color=colors.HexColor(GREEN),
+        )
+    )
+    story.append(Spacer(1, 0.3 * inch))
+
+    for raw in lines:
+        line = markdown_to_reportlab(raw.strip())
+
+        if not line:
+            story.append(Spacer(1, 0.08 * inch))
+            continue
+
+        if line.startswith("# "):
+            story.append(Paragraph(line[2:], title))
+
+        elif line.startswith("## "):
+            story.append(Paragraph(line[3:], heading))
+
+        elif line.startswith("### "):
+            story.append(Paragraph(line[4:], subheading))
+
+        elif line.startswith("- "):
+            story.append(Paragraph("• " + line[2:], bullet))
+
+        elif line.startswith("* "):
+            story.append(Paragraph("• " + line[2:], bullet))
+
+        else:
+            story.append(Paragraph(line, body))
+
+    story.append(Spacer(1, 0.25 * inch))
+    story.append(
+        HRFlowable(
+            width="100%",
+            thickness=1,
+            color=colors.HexColor(GREEN),
+        )
+    )
+    story.append(Spacer(1, 0.15 * inch))
+
+    story.append(
+        Paragraph(
+            "<b>Important:</b> "
+            "This recommendation is generated by Stock Picker AI using publicly "
+            "available information and AI-based analysis. It is provided solely "
+            "for informational and educational purposes and should not be "
+            "considered financial, investment, legal, or tax advice. Stock "
+            "market investments involve risk, including the possible loss of "
+            "capital. You should conduct your own research, evaluate your "
+            "financial objectives and risk tolerance, and consult a qualified "
+            "financial advisor before making any investment decisions. Neither "
+            "Stock Picker AI nor its developer shall be liable for any financial "
+            "losses, investment decisions, or outcomes resulting from the use of "
+            "this recommendation.",
+            important,
+        )
+    )
+
+    doc.build(story, canvasmaker=NumberedCanvas)
+
+    print(f"PDF created: {pdf_path}")
+    return pdf_path
