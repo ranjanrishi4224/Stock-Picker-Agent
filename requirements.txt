@@ -1,0 +1,8 @@
+crewai
+crewai-tools
+groq
+python-dotenv
+requests
+reportlab
+pydantic
+serper-sdk

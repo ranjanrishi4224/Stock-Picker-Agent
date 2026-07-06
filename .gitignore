@@ -1,59 +1,44 @@
-__pycache__/
-*.py[cod]
-*.so
-
+# Virtual Environment
 .venv/
 venv/
 env/
-ENV/
 
+# Environment Variables
 .env
-.env.*
-!.env.example
 
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Generated Output
+output/
+
+# Build Files
 build/
 dist/
 *.egg-info/
-.eggs/
-pip-wheel-metadata/
 
-output/
-knowledge/
-logs/
-*.log
-
-*.db
-*.sqlite3
-
-.vscode/
-.idea/
-*.swp
-
-.DS_Store
-Thumbs.db
-
+# Test & Coverage
 .pytest_cache/
 .coverage
-coverage.xml
 htmlcov/
-.tox/
-.nox/
 
+# Type Checking
 .mypy_cache/
 .pyre/
-.pytype/
 
-.ruff_cache/
-
+# Jupyter Notebook
 .ipynb_checkpoints/
 
-*.tmp
-*.temp
+# IDE Settings
+.vscode/
+.idea/
 
-*.pem
-*.key
-*.crt
-*.p12
+# Logs
+*.log
 
-*.bak
-*.old
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini

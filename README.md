@@ -1,54 +1,215 @@
-# StockPicker Crew
+# Stock Picker AI
 
-Welcome to the StockPicker Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+Stock Picker AI is a multi-agent investment research system built using CrewAI. The application identifies trending companies in a selected sector, performs comprehensive financial research using the latest publicly available information, recommends the strongest investment opportunity, generates a professional PDF report, and emails the report to the user.
+
+The project demonstrates hierarchical AI agent orchestration, web search, financial analysis, automated report generation, PDF creation, and email automation using Groq-powered language models.
+
+---
+
+## Features
+
+- Hierarchical multi-agent workflow using CrewAI
+- Financial News Analyst for identifying trending companies
+- Financial Research Analyst for detailed company analysis
+- Investment Decision Agent for selecting the strongest investment opportunity
+- Manager Agent for task delegation and coordination
+- Latest financial news retrieval using Serper Search
+- Professional investment report generation
+- Automatic PDF report creation
+- Email delivery with PDF attachment
+- Groq GPT-OSS-20B integration
+- Configurable investment sector
+
+---
+
+## Project Structure
+
+```
+Stock-Picker-Agent/
+│
+├── output/
+│   ├── decision.md
+│   ├── report.pdf
+│   ├── research_report.md
+│   ├── trending_companies.json
+│   └── trending_companies.md
+│
+├── src/
+│   └── stock_picker/
+│       ├── config/
+│       │   ├── agents.yaml
+│       │   └── tasks.yaml
+│       │
+│       ├── tools/
+│       │   ├── __init__.py
+│       │   └── send_email.py
+│       │
+│       ├── utils/
+│       │   ├── __init__.py
+│       │   └── generate_pdf.py
+│       │
+│       ├── __init__.py
+│       ├── crew.py
+│       └── main.py
+│
+├── tests/
+├── .env
+├── .gitignore
+├── AGENTS.md
+├── pyproject.toml
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Technology Stack
+
+- Python
+- CrewAI
+- Groq
+- Serper API
+- ReportLab
+- SMTP
+- Pydantic
+
+---
+
+## Agent Workflow
+
+```
+Manager
+    │
+    ├──────────────► Trending Company Finder
+    │                       │
+    │                       ▼
+    │              Trending Companies
+    │
+    ├──────────────► Financial Researcher
+    │                       │
+    │                       ▼
+    │               Financial Analysis
+    │
+    └──────────────► Stock Picker
+                            │
+                            ▼
+                 Investment Recommendation
+                            │
+                            ▼
+                     decision.md
+                            │
+                            ▼
+                      report.pdf
+                            │
+                            ▼
+                     Email Notification
+```
+
+---
 
 ## Installation
 
-Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
-
-First, if you haven't already, install uv:
+Clone the repository.
 
 ```bash
-pip install uv
+git clone https://github.com/ranjanrishi4224/Stock-Picker-Agent.git
+cd Stock-Picker-Agent
 ```
 
-Next, navigate to your project directory and install the dependencies:
+Create a virtual environment.
 
-(Optional) Lock the dependencies and install them by using the CLI command:
+Windows
+
 ```bash
-crewai install
+python -m venv .venv
 ```
-### Customizing
 
-**Add your `OPENAI_API_KEY` into the `.env` file**
+Activate the virtual environment.
 
-- Modify `src/stock_picker/config/agents.yaml` to define your agents
-- Modify `src/stock_picker/config/tasks.yaml` to define your tasks
-- Modify `src/stock_picker/crew.py` to add your own logic, tools and specific args
-- Modify `src/stock_picker/main.py` to add custom inputs for your agents and tasks
+```bash
+.venv\Scripts\activate
+```
+
+Linux/macOS
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install dependencies.
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file.
+
+```env
+GROQ_API_KEY=your_groq_api_key
+
+SERPER_API_KEY=your_serper_api_key
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
+SMTP_FROM=your_email@gmail.com
+SMTP_TO=recipient_email@gmail.com
+
+MODEL=groq/openai/gpt-oss-20b
+```
+
+---
 
 ## Running the Project
 
-To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
-
 ```bash
-$ crewai run
+crewai run
 ```
 
-This command initializes the stock_picker Crew, assembling the agents and assigning them tasks as defined in your configuration.
+or
 
-This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
+```bash
+python -m stock_picker.main
+```
 
-## Understanding Your Crew
+---
 
-The stock_picker Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
+## Generated Output
 
-## Support
+The project automatically generates:
 
-For support, questions, or feedback regarding the StockPicker Crew or crewAI.
-- Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
-- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
-- [Chat with our docs](https://chatg.pt/DWjSBZn)
+- Trending company report
+- Financial research report
+- Investment recommendation report
+- Professional PDF report
+- Email notification with attached PDF report
 
-Let's create wonders together with the power and simplicity of crewAI.
+All generated files are stored inside the `output` directory.
+
+---
+
+## Disclaimer
+
+This project has been developed solely for educational, learning, and demonstration purposes.
+
+The investment recommendations generated by Stock Picker AI are based on AI-generated analysis and publicly available information. The recommendations should not be interpreted as financial, investment, legal, tax, or professional advice.
+
+The information provided by this project may be incomplete, outdated, or inaccurate. Users are solely responsible for conducting their own research, evaluating their financial objectives, assessing their risk tolerance, and consulting qualified financial professionals before making any investment decisions.
+
+By using this project, you acknowledge that all investment decisions are made entirely at your own discretion and risk.
+
+The developer of this project and Stock Picker AI shall not be held liable for any direct, indirect, incidental, consequential, financial, legal, or other damages, losses, liabilities, or claims arising from the use of this software, its recommendations, reports, or any decisions made based on its output.
+
+Use this project entirely at your own risk.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
