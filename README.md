@@ -17,7 +17,7 @@ The project demonstrates hierarchical AI agent orchestration, web search, financ
 - Professional investment report generation
 - Automatic PDF report creation
 - Email delivery with PDF attachment
-- Groq GPT-OSS-20B integration
+- groq/meta-llama/llama-4-scout-17b-16e-instruct
 - Configurable investment sector
 
 ---
