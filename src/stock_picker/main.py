@@ -32,7 +32,7 @@ def run():
         print("=" * 70)
         print(result)
 
-        report_path = "output/decision.md"
+        report_path = "output/report.pdf"
 
         if os.path.exists(report_path):
 

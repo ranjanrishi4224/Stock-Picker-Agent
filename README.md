@@ -161,7 +161,7 @@ SMTP_PASSWORD=your_app_password
 SMTP_FROM=your_email@gmail.com
 SMTP_TO=recipient_email@gmail.com
 
-MODEL=groq/openai/gpt-oss-20b
+MODEL: groq/meta-llama/llama-4-scout-17b-16e-instruct
 ```
 
 ---
